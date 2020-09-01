@@ -1,5 +1,7 @@
 # Aliens Go Home!
 
+This project is based on [Developing Games with React, Redux, and SVG - Part 3](https://auth0.com/blog/developing-games-with-react-redux-and-svg-part-3/). 
+
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>
@@ -7,12 +9,65 @@ You can find the most recent version of this guide [here](https://github.com/fac
 
 ## Quick run guide
 
-```
-git clone https://github.com/pfilaretov/aliens-go-home-part-3.git
-cd aliens-go-home-part-3
-npm install
-npm start
-```
+- install node.js, use NodeSource repository for CentOS 7:
+  ```
+  curl -sL https://rpm.nodesource.com/setup_12.x | sudo bash -
+  sudo yum install -y nodejs
+  ```
+- clone the repo
+  ```
+  git clone https://github.com/pfilaretov/aliens-go-home-part-3.git
+  cd aliens-go-home-part-3
+  ```
+- install dependencies
+  ```
+  npm install
+  ```
+- update start script in `package.json` to run on desired port:
+  - Windows
+    ```
+    "scripts": {
+        "start": "set PORT=7060 && react-scripts start"
+    }
+    ```
+  - Linux
+    ```
+    "scripts": {
+        "start": "PORT=7060 react-scripts start"
+    }
+    ```
+- start the app
+  ```
+  npm start
+  ```
+
+## How to setup HTTPS
+Here is how to setup HTTPS on CentOS 7 with a valid certificate, based on [Using HTTPS in development](https://create-react-app.dev/docs/using-https-in-development/) 
+and [Let's Encrypt CertBot](https://certbot.eff.org/lets-encrypt/centosrhel7-other).
+- enable EPEL repo
+- install Certbot:
+  ```
+  sudo yum install certbot
+  ```
+- create a certificate with Certbot:
+  ```
+  sudo certbot certonly --standalone
+  ```
+- set up automatic certificate renewal:
+  ```
+  echo "0 0,12 * * * root python -c 'import random; import time; time.sleep(random.random() * 3600)' && certbot renew -q" | sudo tee -a /etc/crontab > /dev/null
+  ``` 
+- update start script in `package.json` to point to certificate and key, don't forget to replace `<your_domain>` with actual domain:
+  ```
+  "scripts": {
+      "start": "HTTPS=true PORT=443 SSL_CRT_FILE=/etc/letsencrypt/live/<your_domain>/fullchain.pem SSL_KEY_FILE=/etc/letsencrypt/live/<your_domain>/privkey.pem react-scripts start"
+  }
+  ```
+- start the app using sudo (on a port below 1024) 
+  ```
+  sudo npm start
+  ```
+
 
 ## Table of Contents
 
